@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+
+  wordpress:
+    image: wordpress:php7.4-apache
+    restart: always
+    ports:
+      - 8080:80
+    volumes:
+      - ./wordpress:/var/www/html
+
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      # 本番SQLエクスポートファイル名
+      MYSQL_DATABASE: import_db_data
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      # docker の volume コンテナと紐づいている
+      - db_data:/var/lib/mysql
+      # SQLデータを本番からインポートする場合は上記と下記を同時に実行
+      - ./import_db_data:/docker-entrypoint-initdb.d
+volumes:
+  db_data:
